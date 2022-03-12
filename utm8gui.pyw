@@ -1,6 +1,5 @@
 import re, os, sys, webbrowser, base64
-from struct import pack
-from datetime import date, datetime
+from datetime import date
 import tkinter as tk
 from tkinter import PhotoImage, Toplevel, ttk
 from tkinter import filedialog as fd
@@ -10,12 +9,14 @@ from tkinter import messagebox as mb
 #*         Backend logic         *#
 #*-------------------------------*#
 
+regex = r'(https?://(?:[\w]|[\d]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)'
+
 def resplit(input):
-  return re.split(r'(https?://(?:[\w]|[\d]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)', input)
+  return re.split(regex, input)
 
 def append(input, utm):
   for i in range(len(input)):
-    if re.match(r'(https?://(?:[\w]|[\d]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+)', input[i]):
+    if re.match(regex, input[i]):
       if '&amp;' not in input[i]:
         input[i] += utm
       else:
@@ -36,9 +37,9 @@ ico_data = b'AAABAAkAEBAAAAEAIABoBAAAlgAAABgYAAABACAAiAkAAP4EAAAgIAAAAQAgAKgQAAC
 
 
 filetypes = (
-  ('HTML Files ', '*.html'),
-  ('text Files ', '*.txt'),
-  ('All Files *.*', '*.*')
+  ('HTML Files (*.html)', '*.html'),
+  ('Text Files (*.txt)', '*.txt'),
+  ('All Files', '*.*')
 ) #^ file types for dialogs
 
 #!===========!#
@@ -63,7 +64,7 @@ def locate_file():
     file_entry.delete(0, 'end')
     file_entry.insert(0, f)
 
-def open_file(e):
+def open_file(*args):
   # open the file in read only mode
   f = open(file_entry.get(), 'r')
   # dump it in the user text box
@@ -76,13 +77,13 @@ def edit_locked(text):
   output_text.text.insert(1.0, text)
   output_text.text.configure(state='disabled')
 
-def reset_action(e):
+def reset_action(*args):
   file_entry.delete(0, 'end')
   user_text.text.delete('1.0', 'end')
   utm_entry.delete(0, 'end')
   edit_locked("")
 
-def reset(e):
+def reset(*args):
   reset_conf = mb.askquestion('This will clear all text fields!', '       Are you sure?', icon='warning')
 
   if reset_conf == 'yes':
