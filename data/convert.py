@@ -1,17 +1,23 @@
 from base64 import b64encode
 from tkinter import filedialog as fd
-with open("icon.ico", "rb") as image_file:
+
+open_filetypes = (
+  ('ICO Files (*.ico)', '*.ico'),
+  ('All Files', '*.*')
+)
+
+save_filetypes = (
+  ('Text File (*.txt)', '*.txt'),
+  ('All Files', '*.*')
+)
+
+
+original_file =  fd.askopenfilename(filetypes=open_filetypes)
+
+with open(original_file, "rb") as image_file:
     encoded_string = b64encode(image_file.read())
-# print(encoded_string)
 
-filetypes = (
-  ('HTML files', '*.html'),
-  ('text files', '*.txt'),
-  ('All files', '*.*')
-) #^ file types for dialogs
+processed_file = fd.asksaveasfile(mode='w', filetypes=save_filetypes)
 
-
-f = fd.asksaveasfile(mode='w', filetypes=filetypes, defaultextension='*.html')
-
-f.write(str(encoded_string))
-f.close()
+processed_file.write(str(encoded_string))
+processed_file.close()
